@@ -1,0 +1,9 @@
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
++CONFIG_STAGING=y
++CONFIG_ANDROID=y
++CONFIG_ANDROID_BINDER_IPC=y
++CONFIG_ANDROID_BINDERFS=y
++CONFIG_ASHMEM=y
++CONFIG_COMPAT=y
