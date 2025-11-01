@@ -304,11 +304,20 @@ jobs:
           sudo pvcreate /dev/loop7
           sudo vgcreate github /dev/loop6 /dev/loop7
           sudo lvcreate -n runner -l 100%FREE github
-          sudo mkfs.xfs /dev/github/runner
+          sudo mkfs.btrfs -f /dev/github/runner
           sudo mkdir -p /builder
           sudo mount /dev/github/runner /builder
-          sudo chown -R runner.runner /builder
+          sudo chown -R runner:runner /builder
+          # Prepare cached directory
+          sudo cp -af /home/runner/actions-runner/cached /builder/cached
+          rm -rf /home/runner/actions-runner/cached
+          sudo ln -sf /builder/cached /home/runner/actions-runner/cached
+          echo "Verifying the symbolic link..."
+          ls -ld /home/runner/actions-runner/cached
+          df -Th /home/runner/actions-runner/cached
+          echo "Server disk layout:"
           df -Th
+          echo "status=success" >> ${GITHUB_OUTPUT}
 
       - name: Download source code
         id: down
@@ -317,7 +326,7 @@ jobs:
         run: |
           df -hT ${PWD}
           git clone -q --single-branch --depth=1 --branch=main https://github.com/armbian/build.git build
-          ln -sf /builder/build ${GITHUB_WORKSPACE}/build
+          ln -sf /builder/build ${{ github.workspace }}/build
           ln -sf /builder/build /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/build
           echo "status=success" >> ${GITHUB_OUTPUT}
 
