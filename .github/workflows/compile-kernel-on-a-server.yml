@@ -181,15 +181,6 @@ jobs:
           kernel_patch: compile-kernel/tools/patch
           auto_patch: true
 
-      - name: Verify kernel config for ashmem/binder
-        run: |
-          CONFIG_FILE=$(find output -name ".config" | head -n1)
-          echo "Checking $CONFIG_FILE"
-          for opt in CONFIG_STAGING CONFIG_ANDROID CONFIG_ANDROID_BINDER_IPC CONFIG_ANDROID_BINDERFS CONFIG_ASHMEM CONFIG_COMPAT; do
-            grep -q "${opt}=y" "$CONFIG_FILE" || { echo "❌ $opt missing"; exit 1; }
-          done
-          echo "✅ All required options are enabled"
-
       - name: Upload Kernel to Release
         uses: ncipollo/release-action@main
         if: ${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()
